@@ -159,10 +159,10 @@ CASOS = [
         ['CT-API-08', 'POST com discount_type inválido', 'PE (inválida)', 'Status 400 rest_invalid_param', 'Negativo', 'S'],
     ]},
     {'us': 'US-0004 – Catálogo de Produtos', 'casos': [
-        ['CT-MOB-01', 'Abrir o app e visualizar a vitrine (Home)', 'PE', 'Barra de busca, categorias e navegação exibidas', 'Feliz', 'S'],
-        ['CT-MOB-02', 'Acessar a aba Browse', 'PE', 'Lista de produtos com nome e preço (R$)', 'Feliz', 'S'],
-        ['CT-MOB-03', 'Buscar por termo existente', 'PE (válida)', 'Somente produtos que contenham o termo', 'Feliz', 'S'],
-        ['CT-MOB-04', 'Buscar por termo inexistente', 'PE (inválida)', 'Nenhum produto listado / mensagem informativa', 'Alternativo', 'S'],
+        ['CT-MOB-01', 'Abrir o app e visualizar a vitrine (Home)', 'PE', 'Barra de busca, categorias e navegação exibidas', 'Feliz', 'N'],
+        ['CT-MOB-02', 'Acessar a aba Browse', 'PE', 'Lista de produtos com nome e preço (R$), filtros Sort By e Category', 'Feliz', 'S'],
+        ['CT-MOB-03', 'Na aba Browse, buscar "Tênis"', 'PE (válida)', 'Somente produtos "Tênis" (camisetas deixam de ser exibidas)', 'Feliz', 'S'],
+        ['CT-MOB-04', 'Buscar "zzzprodutoinexistente"', 'PE (inválida)', 'Mensagem "No products found" e nenhum preço listado', 'Alternativo', 'S'],
         ['CT-CAT-05', 'Web: abrir detalhe do produto', 'PE', 'Nome, preço, variações e botão Comprar', 'Feliz', 'N'],
     ]},
     {'us': 'US-0005 – Painel Minha Conta', 'casos': [
@@ -274,20 +274,36 @@ MOBILE_TEXTO = [
     'A automação mobile (pasta Mobile) considera apenas a funcionalidade de Catálogo de Produtos, conforme o enunciado. '
     'Foi escolhida a plataforma iOS, pois o aplicativo iOS disponibilizado pela EBAC (EBAC Store) é o aplicativo de '
     'catálogo voltado ao cliente, enquanto o APK Android corresponde ao aplicativo administrativo do WooCommerce. '
-    'Os testes usam WebdriverIO 9 com Appium (XCUITest) executando em simuladores do Sauce Labs, o que dispensa '
-    'emuladores locais e permite a execução no GitHub Actions. Foi aplicado o padrão Screen Object (equivalente ao '
-    'Page Object para telas mobile) e o relatório é gerado com o Allure.',
+    'Os testes usam WebdriverIO 9 com Appium (XCUITest) executando em simuladores iOS do Sauce Labs, o que dispensa '
+    'Mac e emuladores locais e permite a execução pelo GitHub Actions (workflow mobile.yml, acionado manualmente). '
+    'Foi aplicado o padrão Screen Object (home.screen.js e browse.screen.js, equivalentes ao Page Object para telas '
+    'mobile), e o relatório é gerado com o Allure, complementado pelo vídeo e pelos logs de cada sessão no Sauce Labs.',
+    'Foram automatizados três casos: CT-MOB-02 (listagem de produtos com nome e preço na aba Browse), CT-MOB-03 '
+    '(busca por produto existente) e CT-MOB-04 (busca sem resultado). O CT-MOB-04 – caminho alternativo – foi '
+    'aprovado: o aplicativo exibiu a mensagem "No products found" e nenhum preço foi listado (Figura abaixo). Os casos '
+    'de caminho feliz CT-MOB-02 e CT-MOB-03 estão implementados, mas não concluíram dentro do tempo limite nas '
+    'execuções em nuvem: a própria busca funciona (a lista é filtrada corretamente, como mostram os vídeos das '
+    'sessões), porém as consultas de elementos do Appium excedem o tempo limite e o Sauce Labs encerra a sessão.',
+    'A análise das execuções mostrou que a causa é a árvore de acessibilidade do aplicativo, construído em React Native: '
+    'os cards agrupam nome e preço em um único elemento e as telas possuem centenas de nós, o que torna lenta cada '
+    'captura (snapshot) do XCUITest. Também foi identificado que as animações contínuas do app faziam cada comando '
+    'aguardar 60 segundos, problema contornado com as configurações reduceMotion e waitForIdleTimeout = 0. '
+    'Como melhorias, recomenda-se ao time de desenvolvimento adicionar identificadores de acessibilidade (testID / '
+    'accessibilityIdentifier) aos cards e ao campo de busca e simplificar a hierarquia de componentes, o que '
+    'tornaria os testes mais rápidos e estáveis. O caso CT-MOB-01 (vitrine da Home) foi mantido como teste manual '
+    'pelo mesmo motivo, já que a Home é a tela com a maior árvore de elementos.',
 ]
 
 MOBILE_IMAGENS = [
-    ('mobile-home.png', 'Tela inicial do app EBAC Store capturada durante a execução no Sauce Labs.'),
-    ('mobile-browse.png', 'Aba Browse com a listagem de produtos.'),
+    ('mobile-browse.png', 'Aba Browse do app EBAC Store com a listagem de produtos (sessão no Sauce Labs).'),
+    ('mobile-busca-sem-resultado.png', 'CT-MOB-04 aprovado: busca sem resultado exibindo "No products found" (Sauce Labs).'),
 ]
 
 CI_TEXTO = [
     'A integração contínua foi implementada com GitHub Actions. A cada push ou pull request na branch main, o '
-    'workflow ci.yml executa em paralelo os testes de API, UI e performance; os relatórios são publicados como '
-    'artefatos e, ao final, reunidos e publicados no GitHub Pages. O workflow mobile.yml executa os testes do '
+    'workflow ci.yml executa em paralelo os testes de API e UI e, em seguida, os testes de performance (a carga de 20 '
+    'usuários degradava o servidor compartilhado e derrubava os testes funcionais quando executados juntos); os '
+    'relatórios são publicados como artefatos e, ao final, reunidos e publicados no GitHub Pages. O workflow mobile.yml executa os testes do '
     'aplicativo no Sauce Labs, com as credenciais armazenadas em GitHub Secrets.',
 ]
 
@@ -297,7 +313,8 @@ CI_ITENS = [
     ('performance: ', 'grafana/setup-k6-action executa login.test.js e catalogo.test.js; marcado como continue-on-error, '
      'pois o ambiente é compartilhado e os thresholds estourados são achados documentados, e não falhas funcionais.'),
     ('relatorios: ', 'baixa os artefatos e publica um índice com todos os relatórios no GitHub Pages.'),
-    ('mobile.yml: ', 'WebdriverIO no Sauce Labs com SAUCE_USERNAME, SAUCE_ACCESS_KEY e SAUCE_APP em Secrets; relatório Allure como artefato.'),
+    ('mobile.yml: ', 'WebdriverIO no Sauce Labs com SAUCE_USERNAME, SAUCE_ACCESS_KEY e SAUCE_APP em Secrets e relatório Allure como artefato; '
+     'acionado manualmente (workflow_dispatch), pois a conta Sauce é trial e as sessões do app iOS são longas.'),
 ]
 
 PERF_TEXTO = [

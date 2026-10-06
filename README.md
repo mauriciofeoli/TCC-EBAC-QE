@@ -58,7 +58,9 @@ BASE_URL=http://localhost npm test
 ## Integração contínua
 
 - **`ci.yml`** – a cada push/PR na `main` executa API, UI e Performance em paralelo, publica os relatórios como artefatos e no **GitHub Pages**.
-- **`mobile.yml`** – executa os testes mobile no Sauce Labs (push em `Mobile/**` ou manual).
+- **`mobile.yml`** – executa os testes mobile no Sauce Labs; acionamento manual (*Actions → Mobile - Sauce Labs → Run workflow*).
+
+> ⚠️ **Mobile:** CT-MOB-04 aprovado no Sauce Labs. CT-MOB-02 e CT-MOB-03 estão implementados, mas excedem o tempo limite no simulador iOS em nuvem por causa da árvore de acessibilidade do app (React Native) – análise completa na seção 4.5 do TCC.
 
 Configuração necessária no repositório:
 1. *Settings → Pages → Source*: **GitHub Actions**.
@@ -79,6 +81,8 @@ Configuração necessária no repositório:
 | CT-CARR-05 | Carrinho vazio | Alternativo | UI |
 | CT-API-01..04 | GET cupons (lista, por ID, 404, 401) + contrato | Feliz/Alternativo/Negativo | API |
 | CT-API-05..08 | POST cupons (criar, duplicado, sem code, tipo inválido) + contrato | Feliz/Alternativo/Negativo | API |
-| CT-MOB-01..04 | Catálogo: listar, categorias, busca, sem resultado | Feliz/Alternativo | Mobile |
+| CT-MOB-02 | Catálogo (iOS): listagem com nome e preço na aba Browse | Feliz | Mobile ⚠️ |
+| CT-MOB-03 | Catálogo (iOS): busca por produto existente | Feliz | Mobile ⚠️ |
+| CT-MOB-04 | Catálogo (iOS): busca sem resultado ("No products found") | Alternativo | Mobile ✅ |
 | CT-PERF-01 | Login com 20 VUs / 2 min / ramp-up 20 s | Carga | Performance |
 | CT-PERF-02 | Navegação no catálogo com 20 VUs / 2 min / ramp-up 20 s | Carga | Performance |

@@ -353,7 +353,7 @@ def main(template):
     for item in C.CI_ITENS:
         marcador(doc, item[1], item[0])
     imagem(doc, os.path.join(RAIZ, 'docs', 'evidencias', 'github-actions.png'),
-           legenda='Execução do pipeline no GitHub Actions.')
+           legenda='Pipeline no GitHub Actions: API e UI aprovados, relatórios publicados no GitHub Pages; o job de k6 sinaliza os thresholds estourados (BUG-05) sem bloquear o pipeline.')
 
     # 4.7 Performance
     titulo(doc, 'Testes de performance', 2)
