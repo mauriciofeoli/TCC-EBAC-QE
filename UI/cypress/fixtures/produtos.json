@@ -1,0 +1,14 @@
+{
+  "hoodie": {
+    "slug": "abominable-hoodie",
+    "nome": "Abominable Hoodie",
+    "tamanho": "XS",
+    "cor": "Red"
+  },
+  "hoodieSemEstoque": {
+    "slug": "abominable-hoodie",
+    "nome": "Abominable Hoodie",
+    "tamanho": "L",
+    "cor": "Blue"
+  }
+}

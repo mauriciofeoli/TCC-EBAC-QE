@@ -1,0 +1,16 @@
+node_modules/
+.env
+*.log
+API/reports/
+UI/cypress/reports/
+UI/cypress/screenshots/
+UI/cypress/videos/
+Mobile/reports/
+Mobile/allure-results/
+Mobile/allure-report/
+Performance/reports/
+site/
+Mobile/*.png
+Mobile/*.xml
+docs/gerador/__pycache__/
+CLAUDE.md

@@ -1,0 +1,16 @@
+{
+  "name": "tcc-ebac-ui",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Testes de UI (US-0001 Carrinho e US-0002 Login) da EBAC Shop com Cypress",
+  "scripts": {
+    "cy:open": "cypress open",
+    "test": "cypress run --browser electron",
+    "test:chrome": "cypress run --browser chrome"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "cypress": "^13.17.0",
+    "cypress-mochawesome-reporter": "^3.8.2"
+  }
+}

@@ -1,0 +1,58 @@
+mindmap
+  root((Estratégia de Testes<br/>EBAC Shop))
+    Objetivos
+      Validar US-0001 a US-0008
+      Garantir regras de negócio
+      Reduzir regressão com automação
+      Feedback rápido no CI
+    Papéis e responsabilidades
+      QE: estratégia, casos, automação, relatórios
+      Dev: testes unitários e correções
+      PO: critérios de aceitação e aceite
+      Scrum Master: remover impedimentos
+    Fases e níveis
+      Refinamento: 3 Amigos e Gherkin
+      Unitário: responsabilidade do dev
+      Integração e API
+      Sistema e E2E
+      Aceitação com o PO
+      Regressão automatizada
+    Tipos de teste
+      Funcional
+      Contrato de API
+      Regressão
+      Performance: carga
+      Mobile
+      Exploratório
+      Usabilidade
+    Técnicas
+      Partição de equivalência
+      Valor limite
+      Tabela de decisão
+      Fluxo feliz, alternativo e negativo
+    Abordagem
+      Manual: exploratório e regras não implementadas
+      Automatizada: fluxos críticos
+      Pirâmide: mais API, menos UI
+      Shift-left
+    Plataformas
+      Web: loja WooCommerce
+      API REST: wc/v3/coupons
+      Mobile: app iOS EBAC Store
+    Ferramentas
+      UI: Cypress + Page Objects
+      API: Supertest + Mocha + Joi
+      Mobile: WebdriverIO + Appium
+      Performance: k6
+      Relatórios: Mochawesome, Allure, k6-reporter
+      CI: GitHub Actions + GitHub Pages
+      Gestão: GitHub e Jira
+    Ambientes
+      Online: lojaebac.ebaconline.art.br
+      Local: Docker lojaebac e lojaebacdb
+      Nuvem mobile: Sauce Labs
+    Padrões e entregáveis
+      Gherkin em português
+      Casos com ID e rastreabilidade
+      Relatórios publicados
+      Bugs com evidências

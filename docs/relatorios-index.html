@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Relatórios - TCC EBAC QE</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 16px; color: #222; }
+    h1 { color: #6b2c91; }
+    li { margin: 12px 0; font-size: 1.1em; }
+    small { color: #666; }
+  </style>
+</head>
+<body>
+  <h1>TCC EBAC – Engenheiro de Qualidade de Software</h1>
+  <p>Relatórios da última execução do pipeline (GitHub Actions).</p>
+  <ul>
+    <li><a href="relatorio-api/api-report.html">API – Cupons (Supertest + Joi)</a></li>
+    <li><a href="relatorio-ui/ui-report.html">UI – Login e Carrinho (Cypress)</a></li>
+    <li><a href="relatorio-performance/login.html">Performance – Login (k6)</a></li>
+    <li><a href="relatorio-performance/catalogo.html">Performance – Catálogo (k6)</a></li>
+  </ul>
+  <p><small>Mobile: os testes rodam no Sauce Labs (workflow "Mobile - Sauce Labs"); vídeos e logs ficam no dashboard do Sauce e o relatório Allure é publicado como artefato do workflow.</small></p>
+</body>
+</html>

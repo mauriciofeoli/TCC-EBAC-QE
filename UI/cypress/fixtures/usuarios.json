@@ -1,0 +1,15 @@
+{
+  "valido": {
+    "usuario": "aluno_ebac@teste.com",
+    "senha": "teste@teste.com",
+    "nomeExibido": "aluno_ebac"
+  },
+  "senhaInvalida": {
+    "usuario": "aluno_ebac@teste.com",
+    "senha": "senha_incorreta"
+  },
+  "inexistente": {
+    "usuario": "usuario_inexistente_tcc@teste.com",
+    "senha": "qualquer123"
+  }
+}

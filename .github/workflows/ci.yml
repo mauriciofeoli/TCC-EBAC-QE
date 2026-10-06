@@ -1,0 +1,105 @@
+name: CI - Testes TCC EBAC QE
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  BASE_URL: http://lojaebac.ebaconline.art.br
+
+jobs:
+  api:
+    name: API (Supertest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: API
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: API/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - name: Publicar relatório da API
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-api
+          path: API/reports
+
+  ui:
+    name: UI (Cypress)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Executar testes Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: UI
+          browser: chrome
+      - name: Publicar relatório de UI
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-ui
+          path: UI/cypress/reports
+
+  performance:
+    name: Performance (k6)
+    runs-on: ubuntu-latest
+    # o ambiente da loja é compartilhado entre alunos: thresholds estourados são achados de
+    # performance documentados no TCC e não devem bloquear o pipeline funcional
+    continue-on-error: true
+    defaults:
+      run:
+        working-directory: Performance
+    steps:
+      - uses: actions/checkout@v4
+      - uses: grafana/setup-k6-action@v1
+      - name: k6 - Login (CT-PERF-01)
+        run: mkdir -p reports && k6 run login.test.js
+      - name: k6 - Catálogo (CT-PERF-02)
+        if: always()
+        run: k6 run catalogo.test.js
+      - name: Publicar relatórios k6
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-performance
+          path: Performance/reports
+
+  relatorios:
+    name: Publicar relatórios no GitHub Pages
+    needs: [api, ui, performance]
+    if: always() && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: site
+      - name: Montar índice dos relatórios
+        run: cp docs/relatorios-index.html site/index.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4
