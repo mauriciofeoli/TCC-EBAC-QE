@@ -61,6 +61,10 @@ jobs:
 
   performance:
     name: Performance (k6)
+    # roda depois dos testes funcionais: a carga de 20 VUs degrada o servidor compartilhado
+    # e faria API/UI falharem por 502 se executassem em paralelo
+    needs: [api, ui]
+    if: always()
     runs-on: ubuntu-latest
     # o ambiente da loja é compartilhado entre alunos: thresholds estourados são achados de
     # performance documentados no TCC e não devem bloquear o pipeline funcional
