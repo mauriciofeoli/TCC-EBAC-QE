@@ -8,7 +8,6 @@ const COUPONS = '/wp-json/wc/v3/coupons';
 
 const api = () => request(BASE_URL);
 
-// Service Object: encapsula as chamadas do serviço de cupons
 const cuponsService = {
   listar: (query = {}) => api().get(COUPONS).auth(API_USER, API_PASS).query(query),
   buscarPorId: (id) => api().get(`${COUPONS}/${id}`).auth(API_USER, API_PASS),

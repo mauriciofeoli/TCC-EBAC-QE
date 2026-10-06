@@ -7,8 +7,6 @@ class ProdutoPage {
     return cy.get('.product_title');
   }
 
-  // seleciona pelo <select> nativo do WooCommerce (oculto pelo tema): evita a corrida entre o clique
-  // no botão de variação e a inicialização do script de swatches em máquinas mais lentas (CI)
   selecionarTamanho(tamanho) {
     cy.get('select[name="attribute_size"]').select(tamanho, { force: true });
   }

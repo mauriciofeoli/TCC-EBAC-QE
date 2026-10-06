@@ -3,7 +3,6 @@ import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.2/index.js';
 
 export const BASE_URL = __ENV.BASE_URL || 'http://lojaebac.ebaconline.art.br';
 
-// Configuração exigida no TCC: 20 VUs, 2 minutos de execução, ramp-up de 20 segundos
 export const options = {
   stages: [
     { duration: '20s', target: 20 },

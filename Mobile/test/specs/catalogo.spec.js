@@ -3,7 +3,6 @@ const browseScreen = require('../screens/browse.screen');
 
 describe('US-0004 | Catálogo de Produtos (app iOS)', () => {
   before(async () => {
-    // o app tem animações contínuas: sem isso o XCUITest espera "ociosidade" a cada comando
     await driver.updateSettings({ waitForIdleTimeout: 0, animationCoolOffTimeout: 0, customSnapshotTimeout: 15 });
   });
 

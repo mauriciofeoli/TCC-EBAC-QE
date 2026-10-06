@@ -9,7 +9,6 @@ export const options = {
 
 const PRODUTOS = ['abominable-hoodie', 'aero-daily-fitness-tee', 'aether-gym-pant'];
 
-// CT-PERF-02: Navegação no Catálogo de Produtos (listagem -> busca -> detalhe)
 export default function () {
   group('Listar produtos', () => {
     const res = http.get(`${BASE_URL}/produtos/`, { tags: { name: 'GET /produtos' } });

@@ -15,8 +15,6 @@ class BrowseScreen {
     return $(`-ios predicate string:label CONTAINS 'Category'`);
   }
 
-  // os cards do app (React Native) agrupam nome e preço num único elemento de acessibilidade,
-  // por isso os seletores usam o label sem filtrar pelo tipo XCUIElementTypeStaticText
   get precos() {
     return $$(`-ios predicate string:label CONTAINS 'R$'`);
   }
@@ -38,7 +36,6 @@ class BrowseScreen {
 
   async focarBusca() {
     if (await this.campoBusca.isExisting()) return;
-    // o campo de busca (React Native) só aparece na árvore de acessibilidade depois de focado
     const { width, height } = await driver.getWindowSize();
     await driver.execute('mobile: tap', { x: Math.round(width * 0.5), y: Math.round(height * 0.171) });
     await this.campoBusca.waitForExist({ timeout: 30000 });

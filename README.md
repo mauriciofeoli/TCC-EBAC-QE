@@ -1,88 +1,91 @@
-# TCC-EBAC-QE – Engenheiro de Qualidade de Software
+# TCC-EBAC-QE
 
-Trabalho de Conclusão de Curso da formação **Profissão: Engenheiro de Qualidade de Software (EBAC)**.
-Autor: **Mauricio Ferreira de Oliveira** – São Paulo, 2026.
+Trabalho de conclusão do curso Engenheiro de Qualidade de Software da EBAC.
 
-Estratégia de testes, critérios de aceitação, casos de teste e automação (UI, API, Mobile e Performance) do e-commerce **EBAC Shop** (`http://lojaebac.ebaconline.art.br`).
+Aluno: Mauricio Ferreira de Oliveira
 
-📄 Documento do TCC: [`docs/TCC-EBAC-QE.docx`](docs/TCC-EBAC-QE.docx)
-🧠 Mapa mental da estratégia: [`docs/estrategia-mapa-mental.png`](docs/estrategia-mapa-mental.png)
-🥒 Critérios de aceitação (Gherkin): [`docs/features`](docs/features)
+Projeto de testes da loja EBAC Shop (http://lojaebac.ebaconline.art.br).
 
-## Estrutura
+## O que tem aqui
 
-| Pasta | Conteúdo | Ferramentas | Testing Pattern | Relatório |
-|---|---|---|---|---|
-| `UI/` | US-0001 Carrinho e US-0002 Login | Cypress 13 (JavaScript) | Page Objects + App Actions + Custom Commands | Mochawesome (`UI/cypress/reports/ui-report.html`) |
-| `API/` | US-0003 API de Cupons | Supertest + Mocha + Chai + Joi | Service Object + Data Factory + validação de contrato | Mochawesome (`API/reports/api-report.html`) |
-| `Mobile/` | Catálogo de Produtos (app iOS EBAC Store) | WebdriverIO 9 + Appium (XCUITest) no Sauce Labs | Screen Objects (Page Objects) | Allure (`Mobile/allure-report`) |
-| `Performance/` | Login e Catálogo | k6 | Configuração compartilhada + massa em `SharedArray` | k6-reporter (`Performance/reports/*.html`) |
-| `.github/workflows/` | CI | GitHub Actions + GitHub Pages | – | Pages + artefatos |
+- `docs/` - documento do TCC (TCC-EBAC-QE.docx), mapa mental da estratégia, arquivos .feature e prints das execuções
+- `UI/` - testes web com Cypress (login e carrinho)
+- `API/` - testes da API de cupons com Supertest e validação de contrato com Joi
+- `Mobile/` - testes do app iOS (catálogo de produtos) com WebdriverIO + Appium rodando no Sauce Labs
+- `Performance/` - testes de carga com k6 (login e catálogo)
+- `.github/workflows/` - pipelines do GitHub Actions
 
-## Pré-requisitos
+## Como rodar
 
-- Node.js 20+
-- Docker (opcional – para rodar o k6 sem instalá-lo ou subir a loja localmente)
-- Conta no Sauce Labs (Mobile)
+Precisa ter o Node instalado (usei a versão 20).
 
-## Como executar
+API:
 
-```bash
-# API
-cd API && npm install && npm test
-
-# UI
-cd UI && npm install && npm test          # headless
-cd UI && npm run cy:open                   # modo interativo
-
-# Performance (k6 instalado)
-cd Performance && k6 run login.test.js && k6 run catalogo.test.js
-# ou via Docker
-docker run --rm -u root -v "$PWD/Performance:/scripts" -w /scripts grafana/k6 run login.test.js
-
-# Mobile (Sauce Labs) – copie Mobile/.env.example para Mobile/.env e preencha
-cd Mobile && npm install && npm test && npm run report
+```
+cd API
+npm install
+npm test
 ```
 
-Todos os projetos aceitam a variável `BASE_URL` (padrão: `http://lojaebac.ebaconline.art.br`).
+UI:
 
-### Ambiente local com Docker (alternativo)
+```
+cd UI
+npm install
+npm test
+```
 
-```bash
+Para abrir o Cypress na tela: `npx cypress open`
+
+Performance (com o k6 instalado):
+
+```
+cd Performance
+k6 run login.test.js
+k6 run catalogo.test.js
+```
+
+Se não tiver o k6 dá pra rodar pelo Docker:
+
+```
+docker run --rm -v "$PWD/Performance:/scripts" -w /scripts grafana/k6 run login.test.js
+```
+
+Mobile: copiar o `Mobile/.env.example` para `Mobile/.env` e colocar o usuário e a access key do Sauce Labs. Depois:
+
+```
+cd Mobile
+npm install
+npm test
+npm run report
+```
+
+Os testes usam o site online por padrão. Para usar a loja local no Docker é só subir os containers e mudar a variável `BASE_URL`:
+
+```
 docker network create --attachable ebac-network
 docker run -d --name wp_db -p 3306:3306 --network ebac-network ernestosbarbosa/lojaebacdb:latest
 docker run -d --name wp -p 80:80 --network ebac-network ernestosbarbosa/lojaebac:latest
-BASE_URL=http://localhost npm test
 ```
 
-## Integração contínua
+## Relatórios
 
-- **`ci.yml`** – a cada push/PR na `main` executa API, UI e Performance em paralelo, publica os relatórios como artefatos e no **GitHub Pages**.
-- **`mobile.yml`** – executa os testes mobile no Sauce Labs; acionamento manual (*Actions → Mobile - Sauce Labs → Run workflow*).
+- API: `API/reports/api-report.html` (mochawesome)
+- UI: `UI/cypress/reports/ui-report.html` (mochawesome)
+- Performance: `Performance/reports/login.html` e `catalogo.html`
+- Mobile: allure (`npm run report`) e os vídeos ficam no Sauce Labs
 
-> ⚠️ **Mobile:** CT-MOB-04 aprovado no Sauce Labs. CT-MOB-02 e CT-MOB-03 estão implementados, mas excedem o tempo limite no simulador iOS em nuvem por causa da árvore de acessibilidade do app (React Native) – análise completa na seção 4.5 do TCC.
+No GitHub Actions os relatórios ficam publicados em https://mauriciofeoli.github.io/TCC-EBAC-QE/
 
-Configuração necessária no repositório:
-1. *Settings → Pages → Source*: **GitHub Actions**.
-2. *Settings → Secrets and variables → Actions*: `SAUCE_USERNAME`, `SAUCE_ACCESS_KEY`, `SAUCE_APP`.
+## CI
 
-## Casos de teste automatizados
+O `ci.yml` roda a cada push na main: primeiro API e UI, depois o k6 (se rodar tudo junto o servidor da loja não aguenta e os outros testes falham). No final publica os relatórios no GitHub Pages.
 
-| ID | Caso | Tipo | Projeto |
-|---|---|---|---|
-| CT-LOGIN-01 | Login com credenciais válidas | Feliz | UI |
-| CT-LOGIN-02 | Senha inválida exibe erro | Alternativo | UI |
-| CT-LOGIN-03 | Usuário inexistente exibe erro | Negativo | UI |
-| CT-LOGIN-04 | Campos vazios exibem erro | Negativo | UI |
-| CT-CARR-01 | Adicionar produto com variações | Feliz | UI |
-| CT-CARR-02 | Total = preço × quantidade | Feliz | UI |
-| CT-CARR-03 | Comprar sem selecionar variações | Alternativo | UI |
-| CT-CARR-04 | Variação sem estoque | Negativo | UI |
-| CT-CARR-05 | Carrinho vazio | Alternativo | UI |
-| CT-API-01..04 | GET cupons (lista, por ID, 404, 401) + contrato | Feliz/Alternativo/Negativo | API |
-| CT-API-05..08 | POST cupons (criar, duplicado, sem code, tipo inválido) + contrato | Feliz/Alternativo/Negativo | API |
-| CT-MOB-02 | Catálogo (iOS): listagem com nome e preço na aba Browse | Feliz | Mobile ⚠️ |
-| CT-MOB-03 | Catálogo (iOS): busca por produto existente | Feliz | Mobile ⚠️ |
-| CT-MOB-04 | Catálogo (iOS): busca sem resultado ("No products found") | Alternativo | Mobile ✅ |
-| CT-PERF-01 | Login com 20 VUs / 2 min / ramp-up 20 s | Carga | Performance |
-| CT-PERF-02 | Navegação no catálogo com 20 VUs / 2 min / ramp-up 20 s | Carga | Performance |
+O job do k6 fica vermelho porque os tempos de resposta passam do limite que defini (p95 < 3s). Isso foi um problema encontrado no teste de performance e está explicado no documento, por isso ele não trava o pipeline.
+
+O `mobile.yml` é rodado manualmente (Actions > Mobile - Sauce Labs > Run workflow) porque minha conta do Sauce é trial. Precisa dos secrets `SAUCE_USERNAME`, `SAUCE_ACCESS_KEY` e `SAUCE_APP`.
+
+## Observações
+
+- No mobile o teste de busca sem resultado (CT-MOB-04) passou. Os testes de listagem e busca (CT-MOB-02 e CT-MOB-03) estão feitos, mas no simulador do Sauce eles estouram o tempo. Expliquei o motivo no documento (seção 4.5).
+- Alguns requisitos das histórias não estão funcionando na loja (limite de 10 itens, valor máximo de R$ 990, cupom automático e bloqueio do login depois de 3 tentativas). Deixei como teste manual e registrei como bug no documento.

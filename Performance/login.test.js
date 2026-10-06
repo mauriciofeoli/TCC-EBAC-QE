@@ -10,10 +10,8 @@ export const options = {
   tags: { cenario: 'login' },
 };
 
-// CT-PERF-01: Login na plataforma (US-0002) com massa de dados user1..user5
 export default function () {
   const usuario = usuarios[(__VU - 1) % usuarios.length];
-  // cookie jar novo a cada iteração: cada login começa sem sessão anterior
   const jar = new http.CookieJar();
 
   group('Abrir página Minha Conta', () => {
@@ -24,7 +22,6 @@ export default function () {
     });
 
     const nonce = res.html().find('input[name="woocommerce-login-nonce"]').attr('value');
-    // sem o formulário não há como autenticar: evita erro em cascata e registra a falha na métrica acima
     if (!nonce) return;
 
     group('Autenticar usuário', () => {

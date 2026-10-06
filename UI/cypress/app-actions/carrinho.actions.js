@@ -1,6 +1,5 @@
 import produtoPage from '../page-objects/produto.page';
 
-// App Actions: atalhos de fluxo reaproveitados pelos specs
 export const adicionarProdutoAoCarrinho = ({ slug, tamanho, cor }, quantidade = 1) => {
   produtoPage.visitar(slug);
   produtoPage.selecionarTamanho(tamanho);

@@ -1,7 +1,5 @@
 name: Mobile - Sauce Labs
 
-# execução manual (Actions > Mobile - Sauce Labs > Run workflow): a conta Sauce é trial e o app iOS é
-# instável no simulador em nuvem (ver seção 4.5 do TCC), então o workflow não roda a cada push
 on:
   workflow_dispatch:
 

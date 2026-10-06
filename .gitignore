@@ -12,5 +12,4 @@ Performance/reports/
 site/
 Mobile/*.png
 Mobile/*.xml
-docs/gerador/__pycache__/
-CLAUDE.md
+docs/gerador/

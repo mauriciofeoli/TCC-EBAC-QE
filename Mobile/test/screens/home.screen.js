@@ -1,4 +1,3 @@
-// posição horizontal (fração da largura) de cada aba na barra inferior fixa do app
 const ABAS = { Home: 0.125, Browse: 0.375, Order: 0.625, Profile: 0.875 };
 
 class HomeScreen {
@@ -14,8 +13,6 @@ class HomeScreen {
     return $(`~tab-${nome}`);
   }
 
-  // a Home tem uma árvore de acessibilidade grande e às vezes o snapshot do XCUITest não devolve
-  // a barra de abas; nesse caso toca na posição fixa da aba
   async tocarAba(nome) {
     try {
       await this.aba(nome).click();
